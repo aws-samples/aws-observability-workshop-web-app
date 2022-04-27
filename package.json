@@ -1,0 +1,53 @@
+{
+  "name": "@aws-solutions-constructs/aws-serverless-web-app",
+  "version": "2.3.0",
+  "description": "Use case pattern for deploying a serverless web app.",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/awslabs/aws-solutions-constructs.git",
+    "directory": "source/use_cases/aws-serverless-web-app"
+  },
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com",
+    "organization": true
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint -c ../eslintrc.yml --ext=.js,.ts . && tslint --project .",
+    "lint-fix": "eslint -c ../eslintrc.yml --ext=.js,.ts --fix .",
+    "test": "jest --coverage",
+    "clean": "tsc -b --clean",
+    "watch": "tsc -b -w",
+    "integ": "cdk-integ",
+    "integ-no-clean": "cdk-integ --no-clean",
+    "integ-assert": "cdk-integ-assert-v2",
+    "build+lint+test": "npm run build && npm run lint && npm test && npm run integ-assert",
+    "jsii-pacmak": "jsii-pacmak --targets js java python"
+  },
+  "dependencies": {
+    "@aws-solutions-constructs/aws-cloudfront-s3": "2.3.0",
+    "@aws-solutions-constructs/aws-cognito-apigateway-lambda": "2.3.0",
+    "@aws-solutions-constructs/aws-lambda-dynamodb": "2.3.0",
+    "@aws-solutions-constructs/core": "2.3.0",
+    "source-map-support": "^0.5.16"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.0",
+    "@types/node": "^10.3.0",
+    "aws-cdk-lib": "2.9.0",
+    "constructs": "^10.0.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js"
+    ]
+  },
+  "peerDependencies": {
+    "aws-cdk-lib": "^2.9.0",
+    "constructs": "^10.0.0"
+  }
+}

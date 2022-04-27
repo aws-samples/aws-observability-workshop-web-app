@@ -1,0 +1,14 @@
+{
+  "name": "aws-newrelic-observabilityserverless-web-app",
+  "version": "2.3.0",
+  "description": "Use case pattern for deploying a observability serverless web app.",
+  "author": {
+    "name": "Amazon Web Services",
+    "url": "https://aws.amazon.com",
+    "organization": true
+  },
+  "license": "Apache-2.0",
+  "dependencies": {
+    "source-map-support": "^0.5.16"
+  }
+}
