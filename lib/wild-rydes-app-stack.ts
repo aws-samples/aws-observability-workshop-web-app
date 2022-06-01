@@ -21,13 +21,14 @@ import { CognitoToApiGatewayToLambda } from '@aws-solutions-constructs/aws-cogni
 import { LambdaToDynamoDB } from '@aws-solutions-constructs/aws-lambda-dynamodb';
 import { Cors } from 'aws-cdk-lib/aws-apigateway';
 import { AttributeType } from 'aws-cdk-lib/aws-dynamodb';
+import * as s3Deployment from 'aws-cdk-lib/aws-s3-deployment';
 
 export class WildRydesAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    const sourceBucket: string = 'wildrydes-us-east-1';
-    const sourcePrefix: string = 'WebApplication/1_StaticWebHosting/website/';
+    // const sourceBucket: string = 'wildrydes-us-east-1';
+    // const sourcePrefix: string = 'WebApplication/1_StaticWebHosting/website/';
 
     const s3Construct = new CloudFrontToS3(this, 'CloudFrontToS3', {
       insertHttpSecurityHeaders: false,
@@ -39,19 +40,19 @@ export class WildRydesAppStack extends Stack {
       logS3AccessLogs: false
     });
     const targetBucket: string = s3Construct.s3Bucket?.bucketName || '';
+    
+    const s3Deploy = new s3Deployment.BucketDeployment(this , 'DeployWebsite', {
+      sources: [s3Deployment.Source.asset('src/web')],
+      destinationBucket: s3Construct.s3BucketInterface,
+      exclude: ['config.js']
+    });
 
     const s3LambdaFunc = new lambda.Function(this, 'staticContentHandler', {
       runtime: lambda.Runtime.PYTHON_3_9,
-      handler: 'copy_configure_s3_objects.on_event',
-      code: new lambda.AssetCode(`src/static-content`),
+      handler: 'configure_s3_objects.on_event',
+      code: new lambda.AssetCode(`src/lambda/static-content`),
       timeout: Duration.minutes(5),
       initialPolicy: [
-        new PolicyStatement({
-          actions: ["s3:GetObject",
-            "s3:ListBucket"],
-          resources: [`arn:${Aws.PARTITION}:s3:::${sourceBucket}`,
-          `arn:aws:s3:::${sourceBucket}/${sourcePrefix}*`]
-        }),
         new PolicyStatement({
           actions: ["s3:ListBucket",
             "s3:GetObject",
@@ -66,10 +67,11 @@ export class WildRydesAppStack extends Stack {
         }),
       ]
     });
+    s3LambdaFunc.node.addDependency(s3Deploy);
     
     const appConstruct = new CognitoToApiGatewayToLambda(this, 'CognitoToApiGatewayToLambda', {
       lambdaFunctionProps: {
-        code: new lambda.AssetCode(`src/business-logic`),
+        code: new lambda.AssetCode(`src/lambda/business-logic`),
         runtime: lambda.Runtime.NODEJS_14_X,
         handler: 'index.handler'
       },
@@ -108,8 +110,6 @@ export class WildRydesAppStack extends Stack {
     new CustomResource(this, 'CustomResource', {
       serviceToken: customResourceProvider.serviceToken,
       properties: {
-        SourceBucket: sourceBucket,
-        SourcePrefix: sourcePrefix,
         Bucket: targetBucket,
         UserPool: appConstruct.userPool.userPoolId,
         Client: appConstruct.userPoolClient.userPoolClientId,
