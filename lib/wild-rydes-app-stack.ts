@@ -27,9 +27,7 @@ export class WildRydesAppStack extends Stack {
   constructor(scope: Construct, id: string, props?: StackProps) {
     super(scope, id, props);
 
-    // const sourceBucket: string = 'wildrydes-us-east-1';
-    // const sourcePrefix: string = 'WebApplication/1_StaticWebHosting/website/';
-
+    // Generate S3 bucket with CloudFront
     const s3Construct = new CloudFrontToS3(this, 'CloudFrontToS3', {
       insertHttpSecurityHeaders: false,
       bucketProps: {
@@ -41,12 +39,14 @@ export class WildRydesAppStack extends Stack {
     });
     const targetBucket: string = s3Construct.s3Bucket?.bucketName || '';
     
+    // Deploy website files to S3
     const s3Deploy = new s3Deployment.BucketDeployment(this , 'DeployWebsite', {
       sources: [s3Deployment.Source.asset('src/web')],
       destinationBucket: s3Construct.s3BucketInterface,
       exclude: ['config.js']
     });
 
+    // Deploy the configure S3 lambda function
     const s3LambdaFunc = new lambda.Function(this, 'staticContentHandler', {
       runtime: lambda.Runtime.PYTHON_3_9,
       handler: 'configure_s3_objects.on_event',
@@ -69,6 +69,7 @@ export class WildRydesAppStack extends Stack {
     });
     s3LambdaFunc.node.addDependency(s3Deploy);
     
+    // Create the RequestUnicorn lambda function
     const appConstruct = new CognitoToApiGatewayToLambda(this, 'CognitoToApiGatewayToLambda', {
       lambdaFunctionProps: {
         code: new lambda.AssetCode(`src/lambda/business-logic`),
@@ -91,6 +92,7 @@ export class WildRydesAppStack extends Stack {
       }
     });
     
+    // Create the Dyanmodb table
     new LambdaToDynamoDB(this, 'LambdaToDynamoDB', {
       existingLambdaObj: appConstruct.lambdaFunction,
       dynamoTableProps: {
@@ -103,6 +105,7 @@ export class WildRydesAppStack extends Stack {
       }
     });
     
+    // Use custom resource provider to initialise the s3 config lambda
     const customResourceProvider = new Provider(this, 'CustomResourceProvider', {
       onEventHandler: s3LambdaFunc
     });
@@ -118,6 +121,7 @@ export class WildRydesAppStack extends Stack {
       }
     });
     
+    // Show outputs
     new CfnOutput(this, 'cloudFrontDistributionId', {
       value: s3Construct.cloudFrontWebDistribution.distributionId
     });
