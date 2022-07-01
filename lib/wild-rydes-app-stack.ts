@@ -43,7 +43,7 @@ export class WildRydesAppStack extends Stack {
     const s3Deploy = new s3Deployment.BucketDeployment(this , 'DeployWebsite', {
       sources: [s3Deployment.Source.asset('src/web')],
       destinationBucket: s3Construct.s3BucketInterface,
-      exclude: ['config.js']
+      exclude: ['js/config.js']
     });
 
     // Deploy the configure S3 lambda function
