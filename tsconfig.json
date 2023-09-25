@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
     "alwaysStrict": true,
-    "charset": "utf8",
     "declaration": true,
     "experimentalDecorators": true,
     "inlineSourceMap": true,
     "inlineSources": true,
-    "lib": [ "es2018" ],
+    "lib": ["es2018"],
     "module": "CommonJS",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
@@ -26,6 +25,6 @@
     "**/*.ts"
   ],
   "exclude": [
-    "node_modules","cdk.out"
+    "node_modules", "cdk.out"
   ]
 }

@@ -1,13 +1,12 @@
 {
-  "name": "@aws-solutions-constructs/aws-serverless-web-app",
+  "name": "@aws-samples/aws-observability-workshop",
   "version": "2.3.0",
-  "description": "Use case pattern for deploying a serverless web app.",
+  "description": "AWS observability workshop",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/awslabs/aws-solutions-constructs.git",
-    "directory": "source/use_cases/aws-serverless-web-app"
+    "url": "https://github.com/aws-samples/aws-observability-workshop-web-app.git"
   },
   "author": {
     "name": "Amazon Web Services",

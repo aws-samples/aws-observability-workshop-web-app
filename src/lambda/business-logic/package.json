@@ -1,5 +1,5 @@
 {
-  "name": "aws-newrelic-observabilityserverless-web-app",
+  "name": "@aws-samples/aws-newrelic-observabilityserverless-web-app",
   "version": "2.3.0",
   "description": "Use case pattern for deploying a observability serverless web app.",
   "author": {
