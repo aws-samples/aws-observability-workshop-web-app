@@ -12,7 +12,7 @@
  */
 
 import { Construct } from "constructs";
-import { Stack, StackProps, Duration, CfnOutput, Aws, CustomResource, RemovalPolicy } from 'aws-cdk-lib';
+import { Stack, StackProps, Duration, CfnOutput, Aws, CustomResource, RemovalPolicy, aws_s3 } from 'aws-cdk-lib';
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import {  Provider } from 'aws-cdk-lib/custom-resources';
@@ -34,6 +34,9 @@ export class WildRydesAppStack extends Stack {
         removalPolicy: RemovalPolicy.DESTROY,
         autoDeleteObjects: true,
         versioned: false
+      },
+      cloudFrontLoggingBucketProps:{
+        objectOwnership: aws_s3.ObjectOwnership.OBJECT_WRITER
       },
       logS3AccessLogs: false
     });
